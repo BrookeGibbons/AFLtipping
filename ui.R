@@ -1,46 +1,68 @@
-dashboardPage(
-    dashboardHeader(title = "MEG fish tipping"),
-    dashboardSidebar(
-        sidebarMenu(
-            menuItem("Leaderboard", tabName = "dashboard", icon = icon("dashboard")),
-            menuItem("Widgets", tabName = "widgets", icon = icon("th"))
-        )),
-    dashboardBody(
-        
-        tabItems(
-            # First tab content
-            tabItem(tabName = "dashboard",
-                    fluidRow(
-                            valueBox("31", "Tippers", icon = icon("question"), color ="green", width = 4),
-                            valueBox(total.tips.correct, "Tips correct", icon = icon("question"), color ="aqua", width = 4),
-                            valueBox(average.per.round, "Average correct per round", icon = icon("question"), color ="yellow", width = 4),
-                            
-                        
-                        box(width=10,height = 500, 
-                            plotOutput("all.tips", height = 500)),
-                        
-                        
-                        box(width = 2,
-                            title = "Controls",
-                            numericInput("no.tippers", "Number of tippers:", min=1, max =31, value = 31),
-                            checkboxGroupInput("organisation.input", "Filter organisations", choices = c("AIMS (dogs)",  
-                                                                                                         "Curtin (dogs)",
-                                                                                                         "DBCA (dogs)",
-                                                                                                         "Foreign",
-                                                                                                         "UWA")),
-                        checkboxGroupInput("level.input", "Filter levels", choices = c("Big wigs",  
-                                                                                                     "Medium wigs",
-                                                                                                     "Small wigs",
-                                                                                                     "Students (plebs)"))),
-                        box(width=10,height = 500,
-                            plotOutput("tips.worm", height = 500))
-                    )
+f7Page(
+    title = "MEG Footy Tipping App",
+    f7TabLayout(
+        navbar = f7Navbar(
+            title = "MEG Footy Tipping App",
+            hairline = FALSE,
+            shadow = TRUE),
+        f7Tabs(
+            id = "tabs",
+            swipeable = TRUE,
+            animated = FALSE,
+            f7Tab(tabName = "Leaderboard",
+                  icon = f7Icon("person_3"),
+                  active = TRUE,
+                  f7Shadow(
+                      intensity = 10,
+                      hover = TRUE,
+                      f7Card(
+                          f7Slider(
+                              inputId = "notippers",
+                              label = "Number of tippers",
+                              max = 31,
+                              min = 0,
+                              value = 31,
+                              scale = FALSE,
+                              scaleSubSteps = 1),
+                          
+                          f7Radio(
+                              inputId = "organisation.input",
+                              label = "Highlight an organisation",
+                              choices = c("AIMS (dogs)",  
+                                          "Curtin (dogs)",
+                                          "DBCA (dogs)",
+                                          "Foreign",
+                                          "UWA"),
+                              selected = NULL),
+                          
+                          br(),
+                          
+                          plotOutput("all.tips"),
+                          
+                          br(),
+                          
+                          plotOutput("tips.worm")
+                      )
+                  )
             ),
-            
-            # Second tab content
-            tabItem(tabName = "widgets",
-                    h2("Widgets tab content")
+            f7Tab(tabName = "Table",
+                  icon = f7Icon("table"),
+                  active = TRUE,
+                  f7Shadow(
+                      intensity = 10,
+                      hover = TRUE,
+                      f7Card(
+                          f7Table(tips.total, card = FALSE)
+                      )
+                  )
+            ),
+            f7Tab(tabName = "Tab 3", "tab 3 text"),
+            .items = f7TabLink(
+                icon = f7Icon("bolt_fill"),
+                label = "Toggle Sheet",
+                `data-sheet` = "#sheet",
+                class = "sheet-open"
             )
         )
-            )
-        )
+    )
+)

@@ -60,13 +60,6 @@ shiny::shinyApp(
                   )
                 )
           ),
-MEG Footy Tipping App
-Number of tippers
-Highlight an organisation
-AIMS (dogs)
-Curtin (dogs)
-DBCA (dogs)
-Foreign
           f7Tab(tabName = "Tab 3", "tab 3 text"),
           .items = f7TabLink(
             icon = f7Icon("bolt_fill"),
