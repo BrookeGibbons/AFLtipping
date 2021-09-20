@@ -98,7 +98,7 @@ shiny::shinyApp(
           theme(axis.text.y = element_text(face="italic"))+
           # theme_collapse+
           scale_y_continuous(expand = expand_scale(mult = c(0, .1)))+
-          theme_minimal(base_size=12, base_family="Roboto")
+          theme_minimal(base_size=12, base_family="Roboto")+ theme(legend.position = "none")
         #theme(axis.text.x = element_text(angle = 90, hjust = 1))
       })
       
