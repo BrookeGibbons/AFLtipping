@@ -31,7 +31,7 @@ shiny::shinyApp(
                     
                     f7Radio(
                       inputId = "organisation.input",
-                      label = "Highlight an organiszation",
+                      label = "Highlight an organisation",
                       choices = c("AIMS (dogs)",  
                                   "Curtin (dogs)",
                                   "DBCA (dogs)",
@@ -39,12 +39,34 @@ shiny::shinyApp(
                                   "UWA"),
                       selected = NULL),
                     
+                    br(),
+                    
                     plotOutput("all.tips"),
-                    plotOutput("distPlot")
+                    
+                    br(),
+                    
+                    plotOutput("tips.worm")
                   )
                   )
                 ),
-          f7Tab(tabName = "Tab 2", "tab 2 text"),
+          f7Tab(tabName = "Table",
+                icon = f7Icon("table"),
+                active = TRUE,
+                f7Shadow(
+                  intensity = 10,
+                  hover = TRUE,
+                  f7Card(
+                    f7Table(tips.total, card = FALSE)
+                  )
+                )
+          ),
+MEG Footy Tipping App
+Number of tippers
+Highlight an organisation
+AIMS (dogs)
+Curtin (dogs)
+DBCA (dogs)
+Foreign
           f7Tab(tabName = "Tab 3", "tab 3 text"),
           .items = f7TabLink(
             icon = f7Icon("bolt_fill"),
@@ -77,7 +99,8 @@ shiny::shinyApp(
       output$all.tips <- renderPlot({
         
         tips.cropped<-tips.total%>%
-          top_n(input$notippers)
+          arrange(-total.tips)%>%
+          slice_max(total.tips, n = input$notippers)
         
         # print(length(unique(input$organisation.input)))
         # 
@@ -98,8 +121,26 @@ shiny::shinyApp(
           theme(axis.text.y = element_text(face="italic"))+
           # theme_collapse+
           scale_y_continuous(expand = expand_scale(mult = c(0, .1)))+
-          theme_minimal(base_size=12, base_family="Roboto")+ theme(legend.position = "none")
+          theme_minimal(base_size=14, base_family="Roboto")+ theme(legend.position = "none")+
+          # scale_fill_hue(l = 40)+
+          scale_fill_brewer(palette="Paired")
         #theme(axis.text.x = element_text(angle = 90, hjust = 1))
+      })
+      
+      output$tips.worm <- renderPlot({
+        
+        players.cropped <- tips.total%>%
+          slice_max(total.tips, n = input$notippers)%>%
+          distinct(tipper)
+        
+        worm.cropped <- semi_join(tips.sum,players.cropped)
+        
+        ggplot(worm.cropped, aes(x=as.numeric(round), y=tips.sum,col=tipper,group))+
+          geom_line()+
+          geom_point()+
+          theme_minimal(base_size=14, base_family="Roboto")
+        
+        
       })
       
       output$data <- renderTable({
