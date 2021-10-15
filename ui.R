@@ -1,5 +1,6 @@
 f7Page(
     title = "MEG Footy Tipping App",
+    tags$head(tags$link(rel = "shortcut icon", href = "favicon.ico")),
     f7TabLayout(
         navbar = f7Navbar(
             title = "MEG Footy Tipping App",
@@ -7,8 +8,8 @@ f7Page(
             shadow = TRUE),
         f7Tabs(
             id = "tabs",
-            swipeable = TRUE,
-            animated = FALSE,
+            swipeable = FALSE,
+            animated = TRUE,
             f7Tab(tabName = "Leaderboard",
                   icon = f7Icon("person_3"),
                   active = TRUE,
@@ -28,18 +29,56 @@ f7Page(
                           f7Radio(
                               inputId = "organisation.input",
                               label = "Highlight an organisation",
-                              choices = c("AIMS (dogs)",  
-                                          "Curtin (dogs)",
-                                          "DBCA (dogs)",
+                              choices = c("AIMS",  
+                                          "Curtin",
+                                          "DBCA",
                                           "Foreign",
                                           "UWA"),
                               selected = NULL),
                           
                           br(),
+                          br(),
                           
                           plotOutput("all.tips"),
                           
                           br(),
+                          
+                          selectInput(inputId = "worm.player",
+                              label = "Plot a player(s) progress:",
+                              choices = c("Lucy A",
+                                          "Brae P",
+                                          "Todd B",
+                                          "Brooke G",
+                                          "Charlotte A",
+                                          "Matt F",
+                                          "Matt B",
+                                          "Rachel A",
+                                          "Emily L",
+                                          "Michael B",
+                                          "Miles P",
+                                          "Mason S",
+                                          "Mike T",
+                                          "Jon-Paul E",
+                                          "Damon D",
+                                          "Jordan G",
+                                          "Shannon D",
+                                          "Ellen D",
+                                          "Tom H",
+                                          "Lauren P",
+                                          "Anita G",
+                                          "Jess K",
+                                          "Sahira B",
+                                          "Blair B",
+                                          "Dianne M",
+                                          "Jane P",
+                                          "Nicole R",
+                                          "Renae H",
+                                          "Matt N",
+                                          "Chris D",
+                                          "Kye A"),
+                              selected = "Lucy A",
+                              multiple = TRUE
+                          ),
                           
                           plotOutput("tips.worm")
                       )
@@ -52,17 +91,11 @@ f7Page(
                       intensity = 10,
                       hover = TRUE,
                       f7Card(
-                          f7Table(tips.total, card = FALSE)
+                          f7Table(tips.table, card = FALSE)
                       )
                   )
-            ),
-            f7Tab(tabName = "Tab 3", "tab 3 text"),
-            .items = f7TabLink(
-                icon = f7Icon("bolt_fill"),
-                label = "Toggle Sheet",
-                `data-sheet` = "#sheet",
-                class = "sheet-open"
             )
+
         )
     )
 )

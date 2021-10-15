@@ -22,7 +22,7 @@ shiny::shinyApp(
                   f7Card(
                     f7Slider(
                       inputId = "notippers",
-                      label = "Number of tippers",
+                      label = "Show top (n) tippers",
                       max = 31,
                       min = 0,
                       value = 31,
@@ -32,9 +32,9 @@ shiny::shinyApp(
                     f7Radio(
                       inputId = "organisation.input",
                       label = "Highlight an organisation",
-                      choices = c("AIMS (dogs)",  
-                                  "Curtin (dogs)",
-                                  "DBCA (dogs)",
+                      choices = c("AIMS",  
+                                  "Curtin",
+                                  "DBCA",
                                   "Foreign",
                                   "UWA"),
                       selected = NULL),
@@ -94,15 +94,7 @@ shiny::shinyApp(
         tips.cropped<-tips.total%>%
           arrange(-total.tips)%>%
           slice_max(total.tips, n = input$notippers)
-        
-        # print(length(unique(input$organisation.input)))
-        # 
-        # if (length(unique(input$organisation.input)) == 0) {
-        #   cols <- "grey"
-        # }
-        # else{
-        #   cols <- brewer.pal(length(unique(input$organisation.input)), "BrBG")
-        # }
+
         
         ggplot(tips.cropped, aes(x=reorder(tipper,total.tips), y=total.tips, 
                    fill = ifelse(institute %in%c(input$organisation.input), "#8C510A","grey"))) +   

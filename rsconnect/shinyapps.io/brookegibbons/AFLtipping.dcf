@@ -5,9 +5,8 @@ account: brookegibbons
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 4556891
-bundleId: 5050881
+bundleId: 5141074
 url: https://brookegibbons.shinyapps.io/AFLtipping/
-when: 1632126543.4631
+when: 1634278162.17825
 asMultiple: FALSE
 asStatic: FALSE
-ignoredFiles: create.data.R|ideas.pptx|logo.pptx|mobile-version.R|README.md|tips.formatted.csv|archive dashboard/server.R|archive dashboard/ui.R

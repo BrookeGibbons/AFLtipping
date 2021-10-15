@@ -18,6 +18,11 @@ temp.data <- read_excel("data/2021_scores.xlsx",sheet = 1)%>% # format round 1 t
 teams <- read.csv("data/team.names.csv")%>%
   dplyr::rename(tipper=name)
 
+final.ranks <- read_excel("data/2021_scores.xlsx",sheet = 23)%>%
+  ga.clean.names()%>%
+  left_join(teams)%>%
+  dplyr::select(rank, tipper)
+
 data <- data.frame() # create blank data frame
 for (i in 1:23) {
 
@@ -65,8 +70,8 @@ tips <- all.rounds%>%
          rd.19.tips,
          rd.20.tips,
          rd.21.tips,
-         rd.22.tips#,
-         #rd.23.tips
+         rd.22.tips,
+         rd.23.tips
          )%>%
   left_join(teams)
 
@@ -95,8 +100,8 @@ margin <- all.rounds%>%
          rd.19.margin,
          rd.20.margin,
          rd.21.margin,
-         rd.22.margin
-         #rd.23.margin
+         rd.22.margin,
+         rd.23.margin
          )%>%
   left_join(teams)
 
@@ -190,7 +195,7 @@ write.csv(tips.sum, "tips.sum.csv",row.names = FALSE)
 plot(tips.sum$round, tips.sum$tips.sum,type="s",col=tips.sum$tipper)
 
 
-
+write.csv(final.ranks,"final.ranks.csv")
 
 ggplot(tips.sum, aes(x=as.numeric(round), y=tips.sum,col=tipper,group))+
   geom_line()+
