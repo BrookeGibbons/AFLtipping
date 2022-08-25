@@ -9,25 +9,25 @@ library(stringr)
 
 # need to rerun with round 23 ----
 # read in data in a loop-
-all.rounds <- read_excel("data/2021_scores.xlsx")
-temp.data <- read_excel("data/2021_scores.xlsx",sheet = 1)%>% # format round 1 to bind others together
-  ga.clean.names()%>%
-  rename(rd.1.rank = rank)%>%
+all.rounds <- read_excel("data/Footy tips_scores_2022.xlsx")
+temp.data <- read_excel("data/Footy tips_scores_2022.xlsx",sheet = 1)%>% # format round 1 to bind others together
+  ga.clean.names() %>%
+  rename(rd.1.rank = rank) %>%
   dplyr::select(-c(avg.rnd, total.tips, total.margin))
 
-teams <- read.csv("data/team.names.csv")%>%
+teams <- read.csv("data/team.names2022.csv") %>%
   dplyr::rename(tipper=name)
 
-final.ranks <- read_excel("data/2021_scores.xlsx",sheet = 23)%>%
-  ga.clean.names()%>%
-  left_join(teams)%>%
+final.ranks <- read_excel("data/Footy tips_scores_2022.xlsx",sheet = 23)%>%
+  ga.clean.names() %>%
+  left_join(teams) %>%
   dplyr::select(rank, tipper)
 
 data <- data.frame() # create blank data frame
 for (i in 1:23) {
 
   rank.name <- paste("rd",i,"rank",sep=".")
-  temp.round <- read_excel("data/2021_scores.xlsx",sheet = i)%>%
+  temp.round <- read_excel("data/Footy tips_scores_2022.xlsx",sheet = i)%>%
     ga.clean.names()%>%
     glimpse()
 
@@ -116,8 +116,7 @@ tips.long <- pivot_longer(tips, 2:23,names_to = "round",values_to = "tips") %>%
 
 all.data <- left_join(tips.long,margin.long)
 
-setwd("Y:/AFLtipping/data")
-write.csv(all.data, "tips.margin.long.csv",row.names = FALSE)
+write.csv(all.data, "data/tips.margin.long.csv",row.names = FALSE)
 
 top.marks <- all.data%>%
   group_by(round)%>%
@@ -142,7 +141,7 @@ top.sum <- all.top%>%
             worst.tipper.no = sum(worst.tipper),
             top.margin.no = sum(top.margin),
             worst.margin.no = sum(top.margin))
-write.csv(top.sum, "top.tippers.and.margins.csv",row.names = FALSE)
+write.csv(top.sum, "data/top.tippers.and.margins.csv",row.names = FALSE)
 
 
 # Create a total number of tips ----
@@ -153,7 +152,7 @@ tips.total <- tips%>%
 
 names(tips.total)
 
-write.csv(tips.total,"total.tips.csv")
+write.csv(tips.total,"data/total.tips.csv")
 
 # bar plot of total tips
 ggplot(tips.total, aes(x=reorder(tipper,total.tips), y=total.tips)) +   
@@ -190,12 +189,12 @@ for (i in unique(tips.long$tipper)) {
 
 tips.sum <- temp.data
 
-write.csv(tips.sum, "tips.sum.csv",row.names = FALSE)
+write.csv(tips.sum, "data/tips.sum.csv",row.names = FALSE)
 
 plot(tips.sum$round, tips.sum$tips.sum,type="s",col=tips.sum$tipper)
 
 
-write.csv(final.ranks,"final.ranks.csv")
+write.csv(final.ranks,"data/final.ranks.csv")
 
 ggplot(tips.sum, aes(x=as.numeric(round), y=tips.sum,col=tipper,group))+
   geom_line()+

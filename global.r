@@ -77,3 +77,4 @@ Theme1 <-    theme_bw()+
     strip.background = element_blank(),
     #plot.title = element_text(color="black", size=12, face="bold.italic")
     )
+
