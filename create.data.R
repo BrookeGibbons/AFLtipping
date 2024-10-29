@@ -9,25 +9,35 @@ library(stringr)
 
 # need to rerun with round 23 ----
 # read in data in a loop-
-all.rounds <- read_excel("data/Footy tips_scores_2022.xlsx")
-temp.data <- read_excel("data/Footy tips_scores_2022.xlsx",sheet = 1)%>% # format round 1 to bind others together
+all.rounds <- read_excel("data/Footy_tips_scores_2024.xlsx")
+
+opening.round.data <- read_excel("data/Footy_tips_scores_2024.xlsx", sheet = 1) %>% # format round 0 to bind others together
+  ga.clean.names() %>%
+  rename(rd.0.rank = rank,
+         rd.0.tips = opening.rd,
+         rd.0.margin = opening.rd.margin) %>%
+  dplyr::select(-c(avg.rnd, total.tips, total.margin))
+
+names(opening.round.data)
+
+temp.data <- read_excel("data/Footy_tips_scores_2024.xlsx", sheet = 2) %>% # format round 0 to bind others together
   ga.clean.names() %>%
   rename(rd.1.rank = rank) %>%
   dplyr::select(-c(avg.rnd, total.tips, total.margin))
 
-teams <- read.csv("data/team.names2022.csv") %>%
-  dplyr::rename(tipper=name)
+# teams <- read.csv("data/team.names2022.csv") %>%
+#   dplyr::rename(tipper=name)
 
-final.ranks <- read_excel("data/Footy tips_scores_2022.xlsx",sheet = 23)%>%
-  ga.clean.names() %>%
-  left_join(teams) %>%
-  dplyr::select(rank, tipper)
+final.ranks <- read_excel("data/Footy_tips_scores_2024.xlsx",sheet = 26)%>%
+  ga.clean.names() #%>%
+  # left_join(teams) %>%
+  #dplyr::select(rank, tipper)
 
 data <- data.frame() # create blank data frame
-for (i in 1:23) {
+for (i in 2:25) {
 
   rank.name <- paste("rd",i,"rank",sep=".")
-  temp.round <- read_excel("data/Footy tips_scores_2022.xlsx",sheet = i)%>%
+  temp.round <- read_excel("data/Footy_tips_scores_2024.xlsx",sheet = i)%>%
     ga.clean.names()%>%
     glimpse()
 
@@ -42,13 +52,15 @@ for (i in 1:23) {
 
 }
 
-all.rounds <- temp.data
+all.rounds <- temp.data %>%
+  left_join(opening.round.data)
 names(all.rounds)
 
 
 # create a data frame with just tips ----
 tips <- all.rounds%>%
   select(team.tipster,
+         rd.0.tips,
          rd.1.tips,
          rd.2.tips,
          rd.3.tips,
@@ -71,14 +83,16 @@ tips <- all.rounds%>%
          rd.20.tips,
          rd.21.tips,
          rd.22.tips,
-         rd.23.tips
-         )%>%
-  left_join(teams)
+         rd.23.tips,
+         rd.24.tips
+         ) #%>%
+  #left_join(teams)
 
 
 
 margin <- all.rounds%>%
   select(team.tipster,
+         rd.0.margin,
          rd.1.margin,
          rd.2.margin,
          rd.3.margin,
@@ -101,15 +115,17 @@ margin <- all.rounds%>%
          rd.20.margin,
          rd.21.margin,
          rd.22.margin,
-         rd.23.margin
+         rd.23.margin,
+         rd.24.margin,
          )%>%
-  left_join(teams)
+  # left_join(teams) %>%
+  glimpse()
 
-margin.long <- pivot_longer(margin, 2:23,names_to = "round",values_to = "margin") %>%
+margin.long <- pivot_longer(margin, 2:26,names_to = "round",values_to = "margin") %>%
   mutate(round=str_replace_all(.$round,c(".margin"="","rd."="")))
 
 
-tips.long <- pivot_longer(tips, 2:23,names_to = "round",values_to = "tips") %>%
+tips.long <- pivot_longer(tips, 2:26,names_to = "round",values_to = "tips") %>%
   mutate(round=str_replace_all(.$round,c(".tips"="","rd."="")))
 
 #### Create one data set ####
@@ -118,7 +134,7 @@ all.data <- left_join(tips.long,margin.long)
 
 write.csv(all.data, "data/tips.margin.long.csv",row.names = FALSE)
 
-top.marks <- all.data%>%
+top.marks <- all.data %>%
   group_by(round)%>%
   summarise(max.tips=max(tips),
             min.tips=min(tips), 
@@ -128,15 +144,15 @@ top.marks <- all.data%>%
 names(all.data)
 names(top.marks)
 
-all.top <- all.data%>%
+all.top <- all.data %>%
   left_join(.,top.marks)%>%
-  mutate(top.tipper = if_else(tips==max.tips,1,0))%>%
-  mutate(worst.tipper = if_else(tips==min.tips,1,0))%>%
-  mutate(top.margin = if_else(margin==min.margin,1,0))%>%
+  mutate(top.tipper = if_else(tips==max.tips,1,0)) %>%
+  mutate(worst.tipper = if_else(tips==min.tips,1,0)) %>%
+  mutate(top.margin = if_else(margin==min.margin,1,0)) %>%
   mutate(worst.margin = if_else(margin==max.margin,1,0))
 
 top.sum <- all.top%>%
-  group_by(tipper)%>%
+  group_by(team.tipster)%>%
   summarise(top.tipper.no = sum(top.tipper),
             worst.tipper.no = sum(worst.tipper),
             top.margin.no = sum(top.margin),
